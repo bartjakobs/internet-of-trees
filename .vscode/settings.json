@@ -1,0 +1,5 @@
+{
+    "terminal.integrated.env.osx": {
+        "PATH": "/Users/bart/.platformio/penv/bin:/Applications/Wine Devel.app/Contents/Resources/start/bin:/Applications/Wine Devel.app/Contents/Resources/wine/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/bart/.composer/vendor/bin:/Developer/android/platform-tools"
+    }
+}

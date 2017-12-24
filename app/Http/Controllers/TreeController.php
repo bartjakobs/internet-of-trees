@@ -48,7 +48,7 @@ class TreeController extends Controller
         $tree = new Tree();
         $tree['name'] = $name;
         $tree['location'] = $location;
-        $tree['decorations'] = $decorations;
+        $tree['decorations'] = intval($decorations);
         $tree['ison'] = $ison;
         $tree['user_id'] = Auth::id();
         $tree->save();
@@ -83,7 +83,7 @@ class TreeController extends Controller
     public function deleteTree($treeId){
         $tree = $this->getTree($treeId);
         if(get_class($tree) != "App\\Tree"){
-            return $tree; // error
+            return $tree; // Validation error
         }
         $tree->delete();
         return ['result' => 'deleted'];

@@ -4,6 +4,9 @@ var ApiConsole = (function () {
     ApiConsole.KEY_TOKEN = "(JWT Token)";
     ApiConsole.token = { 'neverAskAgain': false, token: false };
 
+    /**
+     * Initialize the API console, set button listeners.
+     */
     ApiConsole.init = function () {
         console.log('%c Have a nice day :)', 'color: gold; display: block; font-size: 15pt;');
         ApiConsole.keyValues.init();
@@ -182,7 +185,11 @@ var ApiConsole = (function () {
         }
     };
 
-
+    /**
+     * Set all the key-value data pairs from an object.
+     * If the value is the ApiConsole.KEY_TOKEN value, replace it with the JWT instead.
+     * @param data {Object}
+     */
     ApiConsole.keyValues.set = function (data) {
         document.getElementsByClassName('keyvalues')[0].innerHTML = '';
         for (var key in data) {
@@ -196,6 +203,9 @@ var ApiConsole = (function () {
         }
     };
 
+    /**
+     * Get all the key-value pairs.
+     */
     ApiConsole.keyValues.get = function () {
         var elements = document.getElementsByClassName('keyvalues')[0].getElementsByClassName('form-input');
         var result = {};
@@ -219,13 +229,6 @@ var ApiConsole = (function () {
      * Add a key-value pair. 
      */
     ApiConsole.keyValues.add = function (key, value) {
-        /*
-        <div class="form-input">
-            <input class="key" type="text" id="key" placeholder="Key">
-            <input class="value" type="text" id="key" placeholder="Value">
-            <button class="delete">&#9587;</button>
-        </div>
-        */
         var container = document.createElement('div');
         container.className = 'form-input';
         var input = document.createElement('input');

@@ -24,8 +24,9 @@ Route::middleware('jwt.auth')->group(function () {
 
 
 Route::prefix('auth')->group(function () {
+    Route::post('register', 'UserController@postRegister');
     Route::post('gettoken', 'JWTAuthController@authenticate');
-    Route::post('getuser', 'JWTAuthController@getUser');
+    Route::get('getuser', 'JWTAuthController@getUser');
 });
 
 

@@ -1,6 +1,8 @@
 var ApiConsole = (function () {
 
     var ApiConsole = {};
+    ApiConsole.KEY_TOKEN = "(JWT Token)";
+    ApiConsole.token = { 'neverAskAgain': false, token: false };
 
     ApiConsole.init = function () {
         console.log('%c Have a nice day :)', 'color: gold; display: block; font-size: 15pt;');
@@ -17,10 +19,9 @@ var ApiConsole = (function () {
      * @param {Object} obj 
      */
     ApiConsole.load = function (obj) {
-        console.log(obj);
         ApiConsole.setUrl(obj.url);
         ApiConsole.setMethod(obj.method);
-        ApiConsole.keyValues.set(obj.data);
+        ApiConsole.keyValues.set(obj.data);        
     };
 
     /**
@@ -80,7 +81,8 @@ var ApiConsole = (function () {
             ).join('&');
         }
         ApiConsole.performRequest(method, url, data, requestDone)
-
+        //document.getElementsByClassName('extra')[0].innerHTML = '';
+        //document.getElementsByClassName('result')[0].innerHTML = '';
     }
 
     /**
@@ -97,14 +99,69 @@ var ApiConsole = (function () {
             statusElem.classList.remove('success');
         }
         statusElem.innerHTML = "HTTP Status " + response.status;
-        try{
-            document.getElementsByClassName('result')[0].innerHTML = syntaxHighlight(JSON.parse(response.response));
+        document.getElementsByClassName('extra')[0].innerHTML = '';
+        try {
+            var json = JSON.parse(response.response);
+            document.getElementsByClassName('result')[0].innerHTML = syntaxHighlight(json);
+            if ('token' in json && !ApiConsole.token.neverAskAgain) {
+                askSaveToken(json);
+            }
         }
-        catch(ex){
+        catch (ex) {
             document.getElementsByClassName('result')[0].innerHTML = response.response;
         }
-        
+
     }
+
+    /**
+     * When the JSON result contains a 'token' key, ask to save the token key for later use.
+     */
+    function askSaveToken(json) {
+        // Find the lement
+        var extraElem = document.getElementsByClassName('extra')[0];
+        extraElem.innerHTML = 'Json Web Token found. ';
+        // Create copy buttons
+        var a = document.createElement('a');
+        a.href = "javascript:;";
+        a.innerHTML = "Copy to other requests"
+        a.addEventListener('click', copyToken.bind(undefined, json.token, extraElem));
+        extraElem.appendChild(a);
+        // separator 
+        var span = document.createElement('span');
+        span.innerHTML = ' | ';
+        extraElem.appendChild(span);
+        // Don't save button
+        a = document.createElement('a');
+        a.href = "javascript:;";
+        a.innerHTML = "Don't ask again"
+        a.addEventListener('click', dontCopyToken.bind(undefined, extraElem));
+        extraElem.appendChild(a);
+    }
+    /**
+     * Token!
+     * @param {String} JWT
+     * @param {Object} elem 
+     */
+    function copyToken(token, elem) {
+        ApiConsole.token.token = token;
+        elem.innerHTML = 'Copied';
+        setTimeout((function (elem) {
+            elem.innerHTML = '';
+        }).bind(undefined, elem), 2000);
+    }
+    /**
+     * Don't ask to copy the token anymore
+     * @param {*} elem 
+     */
+    function dontCopyToken(elem) {
+        ApiConsole.token.neverAskAgain = true;
+        elem.innerHTML = 'Ok. Reload the page if you change your mind.';
+        setTimeout((function (elem) {
+            elem.innerHTML = '';
+        }).bind(undefined, elem), 2000);
+
+    }
+
 
     /*
      * Key value pairs input.
@@ -130,7 +187,11 @@ var ApiConsole = (function () {
         document.getElementsByClassName('keyvalues')[0].innerHTML = '';
         for (var key in data) {
             if (data.hasOwnProperty(key)) {
-                ApiConsole.keyValues.add(key, data[key]);
+                if (data[key] == ApiConsole.KEY_TOKEN && ApiConsole.token.token !== false) {
+                    ApiConsole.keyValues.add(key, ApiConsole.token.token);
+                }else{
+                    ApiConsole.keyValues.add(key, data[key]);
+                }
             }
         }
     };
@@ -194,11 +255,14 @@ var ApiConsole = (function () {
     };
 
     ApiConsole.demos = {};
-    
 
+    /**
+     * Initialize the demo window.
+     */
     ApiConsole.demos.init = function () {
         var elem = document.getElementsByClassName('demo')[0];
         elem.innerHTML = "<h1>Demo</h1>";
+        /// Make all the elements
         for (var key in ApiConsole.demos.demos) {
             if (ApiConsole.demos.demos.hasOwnProperty(key)) {
                 var demos = ApiConsole.demos.demos[key];
@@ -225,17 +289,24 @@ var ApiConsole = (function () {
                 row.appendChild(list);
                 elem.appendChild(row);
 
-
-
             }
         }
     }
 
+    /**
+     * Load a demo.
+     */
     ApiConsole.demos.loadDemo = function (demo) {
         ApiConsole.load(demo);
     }
 
-
+    /**
+     * Perform an HTTP request!
+     * @param {String} method 
+     * @param {String} url 
+     * @param {Mixed} data 
+     * @param {Function} callback 
+     */
     ApiConsole.performRequest = function (method, url, data, callback) {
         var params = typeof data == 'string' ? data : Object.keys(data).map(
             function (k) { return encodeURIComponent(k) + '=' + encodeURIComponent(data[k]) }
@@ -288,31 +359,31 @@ var ApiConsole = (function () {
      * API Console demos
      */
     ApiConsole.demos.demos = {
-        "Authentication": { 
-            "Register user": {"url": "/api/auth/register", "method": "POST", "data": {"email": "test@example.com", "password": "password"}},
-            "Get access token": { "url": "/api/auth/gettoken", "method": "POST", "data": {'email': 'test@bartjakobs.nl', 'password': 'test'}},
-            "Get user info": { "url": "/api/auth/getuser", "method": "POST", "data": { 'token': 'JWT access token' } } 
+        "Authentication": {
+            "Register user": { "url": "/api/auth/register", "method": "POST", "data": { "email": "test@example.com", "password": "password", 'name': "Test User" } },
+            "Get access token": { "url": "/api/auth/gettoken", "method": "POST", "data": { 'email': 'test@bartjakobs.nl', 'password': 'test' } },
+            "Get user info": { "url": "/api/auth/getuser", "method": "GET", "data": { 'token': ApiConsole.KEY_TOKEN } }
         },
         "Trees": {
             "List this users' trees": {
-                "url": "/api/trees", "method": "GET", "data": {'token': "JWT access token"}
+                "url": "/api/trees", "method": "GET", "data": { 'token': ApiConsole.KEY_TOKEN }
             },
             "Register a new tree": {
-                "url": "/api/trees", "method": "POST", "data": { 'token': "JWT access token", 'name': "oh christmas tree", 'location': "Den Bosch", 'ison': false, 'decorations': 30}
+                "url": "/api/trees", "method": "POST", "data": { 'token': ApiConsole.KEY_TOKEN, 'name': "My christmas tree", 'location': "Den Bosch", 'ison': "false", 'decorations': "30" }
             },
             "Modify an existing tree": {
-                "url": "/api/trees/5", "method": "POST", "data": { 'token': "JWT access token", 'ison': "true", 'decorations': "25" }
+                "url": "/api/trees/5", "method": "POST", "data": { 'token': ApiConsole.KEY_TOKEN, 'ison': "true", 'decorations': "25" }
             },
             "Delete a tree": {
-                "url": "/api/trees/5", "method": "DELETE", "data": { 'token': "JWT access token" }
+                "url": "/api/trees/5", "method": "DELETE", "data": { 'token': ApiConsole.KEY_TOKEN }
             }
         },
-        "Statistics" : { 
+        "Statistics": {
             "Get all availabale statistics": {
                 "url": "/api/public/statistics", "method": "GET", "data": {}
             }
         }
-        
+
     };
 
     return ApiConsole;

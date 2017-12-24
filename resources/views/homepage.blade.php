@@ -52,7 +52,7 @@
             </div>
 
             <div class="row stats">
-                Currently <span id="totalTrees">5</span> christmas trees are registered, <span id="totalOn">2</span> of which with burning candles, with a total of <span id="totalDecorations">2</span> decorations in those trees.
+               <p> <span id="totalTrees">5</span> christmas trees are registered</p><p><span id="totalOn">2</span> have burning candles</p><p><span id="totalDecorations">2</span> decorations in those trees.</p>
 
         </div>
     </body>

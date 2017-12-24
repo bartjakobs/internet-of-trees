@@ -97,7 +97,13 @@ var ApiConsole = (function () {
             statusElem.classList.remove('success');
         }
         statusElem.innerHTML = "HTTP Status " + response.status;
-        document.getElementsByClassName('result')[0].innerHTML = syntaxHighlight(JSON.parse(response.response));
+        try{
+            document.getElementsByClassName('result')[0].innerHTML = syntaxHighlight(JSON.parse(response.response));
+        }
+        catch(ex){
+            document.getElementsByClassName('result')[0].innerHTML = response.response;
+        }
+        
     }
 
     /*
@@ -188,9 +194,7 @@ var ApiConsole = (function () {
     };
 
     ApiConsole.demos = {};
-    ApiConsole.demos.demos = {
-        "Authentication": { "List clients": { "url": "/oauth/clients/", "method": "GET", "data": {} } }
-    };
+    
 
     ApiConsole.demos.init = function () {
         var elem = document.getElementsByClassName('demo')[0];
@@ -280,8 +284,36 @@ var ApiConsole = (function () {
         });
     }
 
-
-
+    /**
+     * API Console demos
+     */
+    ApiConsole.demos.demos = {
+        "Authentication": { 
+            "Register user": {"url": "/api/auth/register", "method": "POST", "data": {"email": "test@example.com", "password": "password"}},
+            "Get access token": { "url": "/api/auth/gettoken", "method": "POST", "data": {'email': 'test@bartjakobs.nl', 'password': 'test'}},
+            "Get user info": { "url": "/api/auth/getuser", "method": "POST", "data": { 'token': 'JWT access token' } } 
+        },
+        "Trees": {
+            "List this users' trees": {
+                "url": "/api/trees", "method": "GET", "data": {'token': "JWT access token"}
+            },
+            "Register a new tree": {
+                "url": "/api/trees", "method": "POST", "data": { 'token': "JWT access token", 'name': "oh christmas tree", 'location': "Den Bosch", 'ison': false, 'decorations': 30}
+            },
+            "Modify an existing tree": {
+                "url": "/api/trees/5", "method": "POST", "data": { 'token': "JWT access token", 'ison': "true", 'decorations': "25" }
+            },
+            "Delete a tree": {
+                "url": "/api/trees/5", "method": "DELETE", "data": { 'token': "JWT access token" }
+            }
+        },
+        "Statistics" : { 
+            "Get all availabale statistics": {
+                "url": "/api/public/statistics", "method": "GET", "data": {}
+            }
+        }
+        
+    };
 
     return ApiConsole;
 })();

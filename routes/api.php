@@ -13,6 +13,27 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+
+Route::middleware('jwt.auth')->group(function () {
+    Route::get('/trees', "TreeController@getTrees");
+    Route::post('/trees', "TreeController@createTree");
+    Route::get('/trees/{tree}', "TreeController@getTree");
+    Route::post('/trees/{tree}', "TreeController@modifyTree");
+    Route::delete('/trees/{tree}', "TreeController@deleteTree");
 });
+
+
+Route::prefix('auth')->group(function () {
+    Route::post('gettoken', 'JWTAuthController@authenticate');
+    Route::post('getuser', 'JWTAuthController@getUser');
+});
+
+
+Route::get('posts/{post}/comments/{comment}', function ($postId, $commentId) {
+    //
+});
+
+Route::prefix('public')->group(function () {
+    Route::get('statistics', 'StatisticsController@getStatistics');
+});
+

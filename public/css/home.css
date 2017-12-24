@@ -1,0 +1,27 @@
+body { 
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(to bottom, #990000,#EE0000);
+        color: white;
+    font-family: "Oswald";
+}
+h1 { 
+    font-family: "Indie Flower";
+    font-size: 40pt;
+}
+.container { 
+    position: relative;
+    width: 700px;
+    margin: 0 auto;
+}
+.container h1 {
+    text-align: center;
+    margin: 0 auto;
+}
+.row {
+    padding-bottom: 30px;
+}
+.text {
+      column-count: 2;
+
+}

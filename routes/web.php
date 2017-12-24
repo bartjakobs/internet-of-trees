@@ -11,6 +11,9 @@
 |
 */
 
-Route::get('/', function () {
+Route::get('/console', function () {
     return view('apiconsole');
+});
+Route::get('/', function () {
+    return view('homepage');
 });

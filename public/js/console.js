@@ -362,7 +362,7 @@ var ApiConsole = (function () {
         "Authentication": {
             "Register user": { "url": "/api/auth/register", "method": "POST", "data": { "email": "test@example.com", "password": "password", 'name': "Test User" } },
             "Get access token": { "url": "/api/auth/gettoken", "method": "POST", "data": { 'email': 'test@bartjakobs.nl', 'password': 'test' } },
-            "Get user info": { "url": "/api/auth/getuser", "method": "GET", "data": { 'token': ApiConsole.KEY_TOKEN } }
+            "Get user info": { "url": "/api/auth/user", "method": "GET", "data": { 'token': ApiConsole.KEY_TOKEN } }
         },
         "Trees": {
             "List this users' trees": {

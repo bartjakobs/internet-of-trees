@@ -29,11 +29,6 @@ Route::prefix('auth')->group(function () {
     Route::get('getuser', 'JWTAuthController@getUser');
 });
 
-
-Route::get('posts/{post}/comments/{comment}', function ($postId, $commentId) {
-    //
-});
-
 Route::prefix('public')->group(function () {
     Route::get('statistics', 'StatisticsController@getStatistics');
 });
